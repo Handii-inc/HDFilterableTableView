@@ -1,0 +1,10 @@
+osx_image: xcode9.1
+language: objective-c
+script:
+- pod install --project-directory=Example
+- set -o pipefail && xcodebuild test -enableCodeCoverage YES -workspace Example/HDFilterableTableView.xcworkspace -scheme HDFilterableTableView-Example -sdk iphonesimulator11.1 -destination 'platform=iOS Simulator,name=iPhone 6,OS=11.1' ONLY_ACTIVE_ARCH=NO | xcpretty
+- pod lib lint
+notifications:
+  slack:
+    secure: j8MsDnr4XaktUM/Jkmb8MAKG68/aXwKESnBk7yxJaXFYSbHAQaONLWtVlfXPfcKpp5sxsmt+l/7QC1fsvoMBOT7GkOtN7Fu/NgsAS1DiTjtvEHLc8gOkP6LwsEFDsWJI5m4u8iC9kImu0JT4zOMxJ2bPCvUX3ngSqVVlXzUEK5a5QG4peoW7cdH+M7lJWdO5+ht+qrK9hHT/NUXhwRTNjjtH7iWWLHy8wof7QWOjp6VPPGPOq70PZ5m5VSDXJPa00AQxDiwy/iVMn9DcSgI2doZxGGi2kIL12+QlyZ4XoLgMwknxNAgJRz7r/7h1A3Iu/4Qw8QH99WmUCMP//RRPlN0fagvkfbemrPVoyYTjYlucTvMavuFe6JDE0zA8qxhOktDdlvn0olSVUGfbcJpH1Qtqd+bzeoyG6Y8SnIbzXKK1/73sJctvEn5lgmrVU9DyjwGhTKls8/jcFS+LQ7qqo3qbowis9BNjHfO1cMvstXAk6BlMBLEPFEuTUxE69Xhcl59Popz4WIkBISFWVZzP23takwrVBNYQzC7NvnBmewLh9Y9dBu2DuBM4UWEwXq+5qyrlT65epIwLeX1s6xdn6mQH2E756CewFC+0MMIcvxeq5GAx3PtL1qoLHzZSjtzlFiMQ1TfS8xS7pyBHglR9CUBOSi6QLWdPgDr5u0TB01s=
+email: false

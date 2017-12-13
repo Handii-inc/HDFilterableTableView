@@ -1,0 +1,10 @@
+use_frameworks!
+
+target 'HDFilterableTableView_Example' do
+  pod 'HDFilterableTableView', :path => '../'
+
+  target 'HDFilterableTableView_Tests' do
+    pod 'HDFilterableTableView', :path => '../'
+    pod 'Quick'
+  end
+end
