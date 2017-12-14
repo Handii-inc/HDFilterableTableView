@@ -22,7 +22,7 @@ pod 'HDFilterableTableView'
 
 ## Author
 
-IgnorantCoder, fr052123@gmail.com
+Handii-inc, github@handii.co.jp
 
 ## License
 
