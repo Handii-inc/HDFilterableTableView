@@ -1,6 +1,6 @@
 # HDFilterableTableView
 
-[![CI Status](http://img.shields.io/travis/IgnorantCoder/HDFilterableTableView.svg?style=flat)](https://travis-ci.org/IgnorantCoder/HDFilterableTableView)
+[![CI Status](http://img.shields.io/travis/Handii-inc/HDFilterableTableView.svg?style=flat)](https://travis-ci.org/IgnorantCoder/HDFilterableTableView)
 [![Version](https://img.shields.io/cocoapods/v/HDFilterableTableView.svg?style=flat)](http://cocoapods.org/pods/HDFilterableTableView)
 [![License](https://img.shields.io/cocoapods/l/HDFilterableTableView.svg?style=flat)](http://cocoapods.org/pods/HDFilterableTableView)
 [![Platform](https://img.shields.io/cocoapods/p/HDFilterableTableView.svg?style=flat)](http://cocoapods.org/pods/HDFilterableTableView)
