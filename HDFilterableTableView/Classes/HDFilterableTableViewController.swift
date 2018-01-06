@@ -9,8 +9,12 @@ open class HDFilterableTableViewController: UIViewController, UITableViewDelegat
     /**
      You can set height of search bar through this property. (default: 45)
      */
-    public var searchBarHeight: CGFloat = 45 {
-        didSet {
+    public var searchBarHeight: CGFloat {
+        get {
+            return self.layout.searchBarHeight
+        }
+        set {
+            self.layout.searchBarHeight = newValue
             self.updateLayout()
         }
     }
@@ -19,20 +23,8 @@ open class HDFilterableTableViewController: UIViewController, UITableViewDelegat
     open weak var dataSource: HDFilterableTableViewDataSource?
 
     //MARK:- Sub components
-    private lazy var searchBar: UISearchBar = {
-        let bar = UISearchBar()
-        bar.delegate = self
-        return bar
-    }()
-    
-    private lazy var table: UITableView = {
-        let view = UITableView()
-        view.register(UITableViewCell.self,
-                      forCellReuseIdentifier: self.cellId)
-        view.delegate = self
-        view.dataSource = self
-        return view
-    }()
+    private lazy var searchBar: UISearchBar = UISearchBar()
+    private lazy var table: UITableView = UITableView()
     
     //MARK:- Methods
     open func deselect()
@@ -47,7 +39,13 @@ open class HDFilterableTableViewController: UIViewController, UITableViewDelegat
     open override func viewDidLoad() {
         super.viewDidLoad()
         self.view.addSubview(self.searchBar)
+        self.searchBar.delegate = self
+        
         self.view.addSubview(self.table)
+        self.table.delegate = self
+        self.table.dataSource = self
+        self.table.register(UITableViewCell.self,
+                            forCellReuseIdentifier: self.cellId)
     }
     
     open override func viewWillLayoutSubviews() {
@@ -108,28 +106,38 @@ open class HDFilterableTableViewController: UIViewController, UITableViewDelegat
     
     //MARK:- Privates
     private let cellId = String(describing: type(of: HDFilterableTableViewController.self))
-    
-    private var searchBarFrame: CGRect {
-        get {
-            return CGRect(x: 0,
-                          y: 0,
-                          width: self.view.frame.width,
-                          height: self.searchBarHeight)
+
+    private lazy var layout: Layout = Layout(base: self.view);
+    private class Layout {
+        private unowned let base: UIView
+        
+        init(base: UIView) {
+            self.base = base
         }
-    }
-    
-    private var tableFrame: CGRect {
-        get {
-            return CGRect(x: 0,
-                          y: self.searchBarHeight,
-                          width: self.view.frame.width,
-                          height: self.view.frame.height - self.searchBarHeight)
+        
+        var searchBarHeight: CGFloat = 45
+        var searchBarFrame: CGRect {
+            get {
+                return CGRect(x: 0,
+                              y: 0,
+                              width: self.base.frame.width,
+                              height: self.searchBarHeight)
+            }
+        }
+        
+        var tableFrame: CGRect {
+            get {
+                return CGRect(x: 0,
+                              y: self.searchBarHeight,
+                              width: self.base.frame.width,
+                              height: self.base.frame.height - self.searchBarHeight)
+            }
         }
     }
     
     private func updateLayout()
     {
-        self.searchBar.frame = self.searchBarFrame
-        self.table.frame = self.tableFrame
+        self.searchBar.frame = self.layout.searchBarFrame
+        self.table.frame = self.layout.tableFrame
     }
 }
