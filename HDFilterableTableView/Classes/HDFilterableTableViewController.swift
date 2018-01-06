@@ -11,11 +11,11 @@ open class HDFilterableTableViewController: UIViewController, UITableViewDelegat
      */
     public var searchBarHeight: CGFloat {
         get {
-            return self.layout.searchBarHeight
+            return self.layouter.searchBarHeight
         }
         set {
-            self.layout.searchBarHeight = newValue
-            self.updateLayout()
+            self.layouter.searchBarHeight = newValue
+            self.layouter.update(self.components)
         }
     }
 
@@ -23,34 +23,52 @@ open class HDFilterableTableViewController: UIViewController, UITableViewDelegat
     open weak var dataSource: HDFilterableTableViewDataSource?
 
     //MARK:- Sub components
-    private lazy var searchBar: UISearchBar = UISearchBar()
-    private lazy var table: UITableView = UITableView()
+    private lazy var components: Components = Components()
+    private class Components {
+        lazy var searchBar: UISearchBar = UISearchBar()
+        lazy var table: UITableView = UITableView()
+        
+        func deselect() {
+            if let selected = self.table.indexPathForSelectedRow {
+                self.table.deselectRow(at: selected, animated: true)
+            }
+            return
+        }
+        
+        func didLoaded(by controller: HDFilterableTableViewController)
+        {
+            controller.view.addSubview(self.searchBar)
+            self.searchBar.delegate = controller
+            
+            controller.view.addSubview(self.table)
+            self.table.delegate = controller
+            self.table.dataSource = controller
+        }
+        
+        func registerCell(forCellReuseIdentifier identifier: String)
+        {
+            self.table.register(UITableViewCell.self,
+                                forCellReuseIdentifier: identifier)
+            return
+        }
+    }
     
     //MARK:- Methods
     open func deselect()
     {
-        guard let selected = self.table.indexPathForSelectedRow else {
-            return  //do nothing.
-        }
-        self.table.deselectRow(at: selected, animated: true)
+        self.components.deselect()
     }
 
     //MARK:- Life cycle events
     open override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.addSubview(self.searchBar)
-        self.searchBar.delegate = self
-        
-        self.view.addSubview(self.table)
-        self.table.delegate = self
-        self.table.dataSource = self
-        self.table.register(UITableViewCell.self,
-                            forCellReuseIdentifier: self.cellId)
+        self.components.didLoaded(by: self)
+        self.components.registerCell(forCellReuseIdentifier: self.cellId)
     }
     
     open override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()        
-        self.updateLayout()
+        super.viewWillLayoutSubviews()
+        self.layouter.update(self.components)
     }
     
     open override func viewWillAppear(_ animated: Bool) {
@@ -94,25 +112,31 @@ open class HDFilterableTableViewController: UIViewController, UITableViewDelegat
     open func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String)
     {
         self.dataSource?.filter(by: searchText)
-        self.table.reloadData()
+        self.components.table.reloadData()
         return
     }
     
     //MARK:- TableViewCellFactory
     open func createCell(for indexPath: IndexPath) -> UITableViewCell {
-        return self.table.dequeueReusableCell(withIdentifier: self.cellId,
-                                              for: indexPath)
+        return self.components.table.dequeueReusableCell(withIdentifier: self.cellId,
+                                                         for: indexPath)
     }
     
     //MARK:- Privates
     private let cellId = String(describing: type(of: HDFilterableTableViewController.self))
 
-    private lazy var layout: Layout = Layout(base: self.view);
+    private lazy var layouter: Layout = Layout(base: self.view);
     private class Layout {
         private unowned let base: UIView
         
         init(base: UIView) {
             self.base = base
+        }
+        
+        func update(_ components: Components) {
+            components.searchBar.frame = self.searchBarFrame
+            components.table.frame = self.tableFrame
+            return
         }
         
         var searchBarHeight: CGFloat = 45
@@ -133,11 +157,5 @@ open class HDFilterableTableViewController: UIViewController, UITableViewDelegat
                               height: self.base.frame.height - self.searchBarHeight)
             }
         }
-    }
-    
-    private func updateLayout()
-    {
-        self.searchBar.frame = self.layout.searchBarFrame
-        self.table.frame = self.layout.tableFrame
     }
 }
