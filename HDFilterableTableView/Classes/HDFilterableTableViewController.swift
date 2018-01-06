@@ -9,11 +9,15 @@ open class HDFilterableTableViewController: UIViewController, UITableViewDelegat
     /**
      You can set height of search bar through this property. (default: 45)
      */
-    var searchBarHeight: CGFloat = 45
+    public var searchBarHeight: CGFloat = 45 {
+        didSet {
+            self.updateLayout()
+        }
+    }
 
     open weak var delegate: HDFilterableTableViewDelegate?
     open weak var dataSource: HDFilterableTableViewDataSource?
-    
+
     //MARK:- Sub components
     private lazy var searchBar: UISearchBar = {
         let bar = UISearchBar()
@@ -39,7 +43,6 @@ open class HDFilterableTableViewController: UIViewController, UITableViewDelegat
         self.table.deselectRow(at: selected, animated: true)
     }
 
-
     //MARK:- Life cycle events
     open override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,16 +51,8 @@ open class HDFilterableTableViewController: UIViewController, UITableViewDelegat
     }
     
     open override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-        
-        self.searchBar.frame = CGRect(x: 0,
-                                      y: 0,
-                                      width: self.view.frame.width,
-                                      height: self.searchBarHeight)
-        self.table.frame = CGRect(x: 0,
-                                  y: self.searchBar.frame.height,
-                                  width: self.view.frame.width,
-                                  height: self.view.frame.height - self.searchBar.frame.height)
+        super.viewWillLayoutSubviews()        
+        self.updateLayout()
     }
     
     open override func viewWillAppear(_ animated: Bool) {
@@ -113,4 +108,28 @@ open class HDFilterableTableViewController: UIViewController, UITableViewDelegat
     
     //MARK:- Privates
     private let cellId = String(describing: type(of: HDFilterableTableViewController.self))
+    
+    private var searchBarFrame: CGRect {
+        get {
+            return CGRect(x: 0,
+                          y: 0,
+                          width: self.view.frame.width,
+                          height: self.searchBarHeight)
+        }
+    }
+    
+    private var tableFrame: CGRect {
+        get {
+            return CGRect(x: 0,
+                          y: self.searchBarHeight,
+                          width: self.view.frame.width,
+                          height: self.view.frame.height - self.searchBarHeight)
+        }
+    }
+    
+    private func updateLayout()
+    {
+        self.searchBar.frame = self.searchBarFrame
+        self.table.frame = self.tableFrame
+    }
 }
