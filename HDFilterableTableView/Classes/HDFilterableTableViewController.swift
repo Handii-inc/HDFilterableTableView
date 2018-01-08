@@ -4,15 +4,26 @@ import UIKit
  Fileterable table view controller.
  This controller already have search bar and table.
  */
-open class HDFilterableTableViewController: UIViewController, UITableViewDelegate, UISearchBarDelegate, UITableViewDataSource, TableViewCellFactory {
+open class HDFilterableTableViewController: UIViewController, UISearchBarDelegate, UITableViewDataSource, TableViewCellFactory {
     //MARK:- Properties
     /**
      You can set height of search bar through this property. (default: 45)
      */
     var searchBarHeight: CGFloat = 45
 
-    open weak var delegate: HDFilterableTableViewDelegate?
-    open weak var dataSource: HDFilterableTableViewDataSource?
+    open var delegate: UITableViewDelegate? {
+        get {
+            return self.table.delegate
+        }
+        set {
+            self.table.delegate = newValue
+        }
+    }
+    open weak var dataSource: HDFilterableTableViewDataSource? {
+        didSet {
+            self.table.dataSource = self
+        }
+    }
     
     //MARK:- Sub components
     private lazy var searchBar: UISearchBar = {
@@ -25,8 +36,6 @@ open class HDFilterableTableViewController: UIViewController, UITableViewDelegat
         let view = UITableView()
         view.register(UITableViewCell.self,
                       forCellReuseIdentifier: self.cellId)
-        view.delegate = self
-        view.dataSource = self
         return view
     }()
     
@@ -86,15 +95,6 @@ open class HDFilterableTableViewController: UIViewController, UITableViewDelegat
     
     open func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return self.dataSource?.tableView?(titleForHeaderInSection: section) ?? nil
-    }
-    
-    //MARK:- UITableViewDelegate
-    open func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let viewModel = self.dataSource else {
-            return  //do nothing
-        }
-
-        self.delegate?.tableView(didSelectRowAt: indexPath, from: viewModel)
     }
     
     //MARK:- UISearchBarDelegate

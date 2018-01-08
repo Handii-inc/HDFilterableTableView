@@ -1,7 +1,7 @@
 import UIKit
 import HDFilterableTableView
 
-class ViewController: HDFilterableTableViewController, HDFilterableTableViewDelegate {
+class ViewController: HDFilterableTableViewController, UITableViewDelegate {
     private let viewModel = FruitsData()
     
     override var prefersStatusBarHidden: Bool {
@@ -23,14 +23,8 @@ class ViewController: HDFilterableTableViewController, HDFilterableTableViewDele
         return
     }
     
-    func tableView(didSelectRowAt indexPath: IndexPath,
-                   from viewModel: HDFilterableTableViewDataSource)
-    {
-        if self.viewModel !== viewModel {
-            return  //do nothing.
-        }
-        
-        let alert = UIAlertController(title: nil, 
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let alert = UIAlertController(title: nil,
                                       message: "Selected " + self.viewModel.getElement(indexPath: indexPath),
                                       preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Close",
