@@ -9,7 +9,15 @@ open class HDFilterableTableViewController: UIViewController, UISearchBarDelegat
     /**
      You can set height of search bar through this property. (default: 45)
      */
-    var searchBarHeight: CGFloat = 45
+    public var searchBarHeight: CGFloat {
+        get {
+            return self.layouter.searchBarHeight
+        }
+        set {
+            self.layouter.searchBarHeight = newValue
+            self.layouter.update(self.components)
+        }
+    }
 
     open var delegate: UITableViewDelegate? {
         get {
@@ -42,31 +50,19 @@ open class HDFilterableTableViewController: UIViewController, UISearchBarDelegat
     //MARK:- Methods
     open func deselect()
     {
-        guard let selected = self.table.indexPathForSelectedRow else {
-            return  //do nothing.
-        }
-        self.table.deselectRow(at: selected, animated: true)
+        self.components.deselect()
     }
-
 
     //MARK:- Life cycle events
     open override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.addSubview(self.searchBar)
-        self.view.addSubview(self.table)
+        self.components.didLoaded(by: self)
+        self.components.registerCell(forCellReuseIdentifier: self.cellId)
     }
     
     open override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        
-        self.searchBar.frame = CGRect(x: 0,
-                                      y: 0,
-                                      width: self.view.frame.width,
-                                      height: self.searchBarHeight)
-        self.table.frame = CGRect(x: 0,
-                                  y: self.searchBar.frame.height,
-                                  width: self.view.frame.width,
-                                  height: self.view.frame.height - self.searchBar.frame.height)
+        self.layouter.update(self.components)
     }
     
     open override func viewWillAppear(_ animated: Bool) {
@@ -101,16 +97,50 @@ open class HDFilterableTableViewController: UIViewController, UISearchBarDelegat
     open func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String)
     {
         self.dataSource?.filter(by: searchText)
-        self.table.reloadData()
+        self.components.table.reloadData()
         return
     }
     
     //MARK:- TableViewCellFactory
     open func createCell(for indexPath: IndexPath) -> UITableViewCell {
-        return self.table.dequeueReusableCell(withIdentifier: self.cellId,
-                                              for: indexPath)
+        return self.components.table.dequeueReusableCell(withIdentifier: self.cellId,
+                                                         for: indexPath)
     }
     
     //MARK:- Privates
     private let cellId = String(describing: type(of: HDFilterableTableViewController.self))
+
+    private lazy var layouter: Layout = Layout(base: self.view)
+    private class Layout {
+        private unowned let base: UIView
+        
+        init(base: UIView) {
+            self.base = base
+        }
+        
+        func update(_ components: Components) {
+            components.searchBar.frame = self.searchBarFrame
+            components.table.frame = self.tableFrame
+            return
+        }
+        
+        var searchBarHeight: CGFloat = 45
+        var searchBarFrame: CGRect {
+            get {
+                return CGRect(x: 0,
+                              y: 0,
+                              width: self.base.frame.width,
+                              height: self.searchBarHeight)
+            }
+        }
+        
+        var tableFrame: CGRect {
+            get {
+                return CGRect(x: 0,
+                              y: self.searchBarHeight,
+                              width: self.base.frame.width,
+                              height: self.base.frame.height - self.searchBarHeight)
+            }
+        }
+    }
 }

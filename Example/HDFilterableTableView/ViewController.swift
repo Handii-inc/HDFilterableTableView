@@ -4,6 +4,20 @@ import HDFilterableTableView
 class ViewController: HDFilterableTableViewController, UITableViewDelegate {
     private let viewModel = FruitsData()
     
+    private lazy var button: UIButton = {
+        let component = UIButton(type: .roundedRect)
+        component.addTarget(self,
+                            action: #selector(self.toggleSearchBarHeight(sender:)),
+                            for: .touchUpInside)
+        component.backgroundColor = .black
+        
+        let title = NSAttributedString(string: "<>",
+                                       attributes: [ .font: UIFont.boldSystemFont(ofSize: 15),
+                                                     .foregroundColor: UIColor.white])
+        component.setAttributedTitle(title, for: .normal)
+        return component
+    }()
+    
     override var prefersStatusBarHidden: Bool {
         return true
     }
@@ -11,6 +25,9 @@ class ViewController: HDFilterableTableViewController, UITableViewDelegate {
     override func viewDidLoad()
     {
         super.viewDidLoad()
+        
+        self.view.addSubview(self.button)
+        
         self.dataSource = self.viewModel
         self.delegate = self
     }
@@ -20,6 +37,12 @@ class ViewController: HDFilterableTableViewController, UITableViewDelegate {
         super.viewWillLayoutSubviews()
         
         self.view.frame = UIScreen.main.bounds
+        self.button.frame = CGRect(x: self.view.frame.width - 60,
+                                   y: self.view.frame.height - 60,
+                                   width: 45,
+                                   height: 45)
+        self.button.layer.cornerRadius = 22.5
+        
         return
     }
     
@@ -33,6 +56,11 @@ class ViewController: HDFilterableTableViewController, UITableViewDelegate {
         self.present(alert,
                      animated: true,
                      completion: nil)
+    }
+    
+     @objc private func toggleSearchBarHeight(sender: UIButton) {
+        self.searchBarHeight = (self.searchBarHeight) == 45 ? 90 : 45
+        return
     }
 }
 
