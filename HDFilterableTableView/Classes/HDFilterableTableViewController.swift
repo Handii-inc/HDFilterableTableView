@@ -125,7 +125,7 @@ open class HDFilterableTableViewController: UIViewController, UITableViewDelegat
     //MARK:- Privates
     private let cellId = String(describing: type(of: HDFilterableTableViewController.self))
 
-    private lazy var layouter: Layout = Layout(base: self.view);
+    private lazy var layouter: Layout = Layout(base: self.view)
     private class Layout {
         private unowned let base: UIView
         
