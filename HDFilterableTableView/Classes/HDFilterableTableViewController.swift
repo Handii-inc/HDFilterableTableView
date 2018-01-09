@@ -21,31 +21,48 @@ open class HDFilterableTableViewController: UIViewController, UISearchBarDelegat
 
     open var delegate: UITableViewDelegate? {
         get {
-            return self.table.delegate
+            return self.components.table.delegate
         }
         set {
-            self.table.delegate = newValue
+            self.components.table.delegate = newValue
         }
     }
     open weak var dataSource: HDFilterableTableViewDataSource? {
         didSet {
-            self.table.dataSource = self
+            self.components.table.dataSource = self
         }
     }
     
     //MARK:- Sub components
-    private lazy var searchBar: UISearchBar = {
-        let bar = UISearchBar()
-        bar.delegate = self
-        return bar
-    }()
-    
-    private lazy var table: UITableView = {
-        let view = UITableView()
-        view.register(UITableViewCell.self,
-                      forCellReuseIdentifier: self.cellId)
-        return view
-    }()
+
+    //MARK:- Sub components
+    private lazy var components: Components = Components()
+    private class Components {
+        lazy var searchBar: UISearchBar = UISearchBar()
+        lazy var table: UITableView = UITableView()
+        
+        func deselect() {
+            if let selected = self.table.indexPathForSelectedRow {
+                self.table.deselectRow(at: selected, animated: true)
+            }
+            return
+        }
+        
+        func didLoaded(by controller: HDFilterableTableViewController)
+        {
+            controller.view.addSubview(self.searchBar)
+            self.searchBar.delegate = controller
+            
+            controller.view.addSubview(self.table)
+        }
+        
+        func registerCell(forCellReuseIdentifier identifier: String)
+        {
+            self.table.register(UITableViewCell.self,
+                                forCellReuseIdentifier: identifier)
+            return
+        }
+    }
     
     //MARK:- Methods
     open func deselect()
