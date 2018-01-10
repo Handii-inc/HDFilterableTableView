@@ -18,10 +18,6 @@ class ViewController: HDFilterableTableViewController, UITableViewDelegate {
         return component
     }()
     
-    override var prefersStatusBarHidden: Bool {
-        return true
-    }
-    
     override func viewDidLoad()
     {
         super.viewDidLoad()
@@ -37,6 +33,10 @@ class ViewController: HDFilterableTableViewController, UITableViewDelegate {
         super.viewWillLayoutSubviews()
         
         self.view.frame = UIScreen.main.bounds
+        self.searchBarY
+            = UIApplication.shared.statusBarFrame.height
+            + (self.navigationController?.navigationBar.frame.height ?? 0)
+        self.searchBarHeight = 50
         self.button.frame = CGRect(x: self.view.frame.width - 60,
                                    y: self.view.frame.height - 60,
                                    width: 45,
