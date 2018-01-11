@@ -155,22 +155,18 @@ open class HDFilterableTableViewController: UIViewController, UISearchBarDelegat
         var searchBarY: CGFloat = 0
         var searchBarHeight: CGFloat = 45
         var searchBarFrame: CGRect {
-            get {
-                return CGRect(x: 0,
-                              y: self.searchBarY,
-                              width: self.base.frame.width,
-                              height: self.searchBarHeight)
-            }
+            return CGRect(x: 0,
+                          y: self.searchBarY,
+                          width: self.base.frame.width,
+                          height: self.searchBarHeight)
         }
         
         var tableFrame: CGRect {
-            get {
-                let y: CGFloat = self.searchBarY + self.searchBarHeight
-                return CGRect(x: 0,
-                              y: y,
-                              width: self.base.frame.width,
-                              height: self.base.frame.height - y)
-            }
+            let y: CGFloat = self.searchBarFrame.maxY
+            return CGRect(x: 0,
+                          y: y,
+                          width: self.base.frame.width,
+                          height: self.base.frame.height - y)
         }
     }
 }

@@ -59,7 +59,7 @@ class ViewController: HDFilterableTableViewController, UITableViewDelegate {
     }
     
      @objc private func toggleSearchBarHeight(sender: UIButton) {
-        self.searchBarHeight = (self.searchBarHeight) == 45 ? 90 : 45
+        self.searchBarHeight = (self.searchBarHeight) == 50 ? 90 : 50
         return
     }
 }
