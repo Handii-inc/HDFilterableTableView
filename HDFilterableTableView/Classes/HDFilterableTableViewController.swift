@@ -7,6 +7,19 @@ import UIKit
 open class HDFilterableTableViewController: UIViewController, UISearchBarDelegate, UITableViewDataSource, TableViewCellFactory {
     //MARK:- Properties
     /**
+     You can set Y of search bar through this property. (default: 0)
+     */
+    public var searchBarY: CGFloat {
+        get {
+            return self.layouter.searchBarY
+        }
+        set {
+            self.layouter.searchBarY = newValue
+            self.layouter.update(self.components)
+        }
+    }
+    
+    /**
      You can set height of search bar through this property. (default: 45)
      */
     public var searchBarHeight: CGFloat {
@@ -33,8 +46,6 @@ open class HDFilterableTableViewController: UIViewController, UISearchBarDelegat
         }
     }
     
-    //MARK:- Sub components
-
     //MARK:- Sub components
     private lazy var components: Components = Components()
     private class Components {
@@ -141,23 +152,21 @@ open class HDFilterableTableViewController: UIViewController, UISearchBarDelegat
             return
         }
         
+        var searchBarY: CGFloat = 0
         var searchBarHeight: CGFloat = 45
         var searchBarFrame: CGRect {
-            get {
-                return CGRect(x: 0,
-                              y: 0,
-                              width: self.base.frame.width,
-                              height: self.searchBarHeight)
-            }
+            return CGRect(x: 0,
+                          y: self.searchBarY,
+                          width: self.base.frame.width,
+                          height: self.searchBarHeight)
         }
         
         var tableFrame: CGRect {
-            get {
-                return CGRect(x: 0,
-                              y: self.searchBarHeight,
-                              width: self.base.frame.width,
-                              height: self.base.frame.height - self.searchBarHeight)
-            }
+            let y: CGFloat = self.searchBarFrame.maxY
+            return CGRect(x: 0,
+                          y: y,
+                          width: self.base.frame.width,
+                          height: self.base.frame.height - y)
         }
     }
 }
