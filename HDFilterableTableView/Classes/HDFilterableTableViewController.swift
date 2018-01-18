@@ -31,6 +31,18 @@ open class HDFilterableTableViewController: UIViewController, UISearchBarDelegat
             self.layouter.update(self.components)
         }
     }
+    
+    /**
+     You can set search bar accessary of through this property.
+     */
+    public var searchBarInputAccessoryView: UIView? {
+        get {
+            return self.components.searchBar.inputAccessoryView
+        }
+        set {
+            self.components.searchBar.inputAccessoryView = newValue
+        }
+    }
 
     open var delegate: UITableViewDelegate? {
         get {
